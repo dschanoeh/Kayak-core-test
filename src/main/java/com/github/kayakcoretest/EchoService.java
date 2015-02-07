@@ -3,7 +3,7 @@ package com.github.kayakcoretest;
 import com.github.kayak.core.Bus;
 import com.github.kayak.core.BusURL;
 import com.github.kayak.core.Frame;
-import com.github.kayak.core.FrameReceiver;
+import com.github.kayak.core.FrameListener;
 import com.github.kayak.core.Subscription;
 import com.github.kayak.core.TimeSource;
 
@@ -28,9 +28,8 @@ public class EchoService {
      * This FrameReceiver gets notified about incoming frames and sends
      * a response.
      */
-    private static FrameReceiver receiver = new FrameReceiver() {
-
-        private final Frame response = new Frame(RESPONSE_ID, new byte[] {0x11});
+    private static FrameListener receiver = new FrameListener() {
+        private final Frame response = new Frame(RESPONSE_ID, false, new byte[] {0x11});
         
         public void newFrame(Frame frame) {
             if(frame.getIdentifier() == REQUEST_ID) {
@@ -49,7 +48,7 @@ public class EchoService {
         
         /* Only receive frames with the REQUEST_ID */
         Subscription s = new Subscription(receiver, bus);
-        s.subscribe(REQUEST_ID);
+        s.subscribe(REQUEST_ID, false);
         
         ts.play(); /* Start simulation time and open connections */
         
